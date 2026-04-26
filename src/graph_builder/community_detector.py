@@ -21,7 +21,6 @@ class CommunityDetector:
 
         if method == 'leiden':
             try:
-                import graspologic
                 from graspologic.algorithms import Leiden
 
                 adj_matrix = nx.to_numpy_array(self.graph)

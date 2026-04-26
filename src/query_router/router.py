@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Literal
 
 class QueryType(Enum):
     VECTOR_ONLY = "vector_only"

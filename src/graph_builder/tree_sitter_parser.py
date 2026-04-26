@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from typing import List, Optional, Literal
 from dataclasses import dataclass, field
 import uuid
@@ -221,8 +220,6 @@ class TreeSitterParser:
 
     def extract_edges(self, nodes: List[CodeNode]) -> List[CodeEdge]:
         edges = []
-        func_nodes = {n.label: n for n in nodes if n.node_type == 'function'}
-        class_nodes = {n.label: n for n in nodes if n.node_type == 'class'}
 
         for node in nodes:
             if node.node_type == 'function':

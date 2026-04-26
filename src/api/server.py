@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict
-import asyncio
 import uuid
 from pathlib import Path
 
@@ -13,8 +12,7 @@ from ..graph_builder.tree_sitter_parser import TreeSitterParser
 from ..graph_builder.community_detector import CommunityDetector
 from ..graph_builder.graph_exporter import GraphExporter
 from ..query_router.router import QueryRouter, QueryType
-from ..result_merger.merger import ResultMerger, VectorResult, GraphResult
-from ..utils.config import config
+from ..result_merger.merger import ResultMerger, VectorResult
 
 app = FastAPI(title="Vector-to-Graph API", version="0.1.0")
 
@@ -236,7 +234,7 @@ async def get_status():
             edge_count=len(current_graph.get("edges", [])),
             last_update=None
         )
-    except Exception as e:
+    except Exception:
         return StatusResponse(
             status="degraded",
             doc_count=0,
