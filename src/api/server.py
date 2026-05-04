@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict
 import uuid
+import numpy as np
 from pathlib import Path
 
 from ..vector_indexer.embedder import Embedder
@@ -12,7 +13,7 @@ from ..graph_builder.tree_sitter_parser import TreeSitterParser
 from ..graph_builder.community_detector import CommunityDetector
 from ..graph_builder.graph_exporter import GraphExporter
 from ..query_router.router import QueryRouter, QueryType
-from ..result_merger.merger import ResultMerger, VectorResult
+from ..result_merger.merger import ResultMerger, VectorResult, GraphResult
 
 app = FastAPI(title="Vector-to-Graph API", version="0.1.0")
 
@@ -47,6 +48,43 @@ def init_components():
     graph_exporter = GraphExporter()
     router = QueryRouter()
     merger = ResultMerger(alpha=0.4, beta=0.6)
+
+
+def search_graph(query_vector: List[float], top_k: int = 10) -> List[GraphResult]:
+    if not current_graph.get("nodes"):
+        return []
+
+    results = []
+    query_np = np.array(query_vector)
+
+    for node in current_graph.get("nodes", []):
+        if node.get("type") in ["function", "class"]:
+            label = node.get("label", "")
+            if label:
+                label_vec = embedder.encode_query(label)
+                label_np = np.array(label_vec)
+                norm_product = np.linalg.norm(query_np) * np.linalg.norm(label_np)
+                if norm_product > 0:
+                    score = np.dot(query_np, label_np) / norm_product
+                    if score > 0.5:
+                        relations = []
+                        for edge in current_graph.get("edges", []):
+                            if edge["source"] == node["id"]:
+                                relations.append({"target": edge["target"], "relation": edge["relation"]})
+                            elif edge["target"] == node["id"]:
+                                relations.append({"source": edge["source"], "relation": edge["relation"]})
+
+                        results.append(GraphResult(
+                            id=node["id"],
+                            label=label,
+                            node_type=node.get("type", ""),
+                            confidence=float(score),
+                            relations=relations,
+                            metadata=node.get("metadata", {})
+                        ))
+
+    results.sort(key=lambda x: x.confidence, reverse=True)
+    return results[:top_k]
 
 
 class IndexRequest(BaseModel):
@@ -110,12 +148,14 @@ async def index_documents(request: IndexRequest, background_tasks: BackgroundTas
 
             chunks = chunker.chunk_file(request.path)
 
+            texts = [chunk.text for chunk in chunks]
+            embeddings = embedder.encode(texts)
+
             vectors = []
-            for chunk in chunks:
-                embedding = embedder.encode([chunk.text])[0]
+            for i, chunk in enumerate(chunks):
                 vectors.append({
                     "id": chunk.id,
-                    "vector": embedding.tolist(),
+                    "vector": embeddings[i].tolist(),
                     "payload": {
                         "text": chunk.text,
                         "metadata": chunk.metadata
@@ -125,16 +165,28 @@ async def index_documents(request: IndexRequest, background_tasks: BackgroundTas
             qdrant_store.upsert(vectors)
 
             nodes, edges = [], []
-            for chunk in chunks:
-                if chunk.metadata.get("chunk_type") in ["code_function", "code_class"]:
-                    nodes.append({
-                        "id": chunk.id,
-                        "label": chunk.metadata.get("function_name") or chunk.metadata.get("class_name"),
-                        "type": chunk.metadata.get("chunk_type"),
-                        "metadata": chunk.metadata
-                    })
+            try:
+                code_nodes = parser.parse_file(request.path)
+                nodes = [{
+                    "id": n.id,
+                    "label": n.label,
+                    "type": n.node_type,
+                    "metadata": {"line": n.line, **n.metadata}
+                } for n in code_nodes]
+                edges = [{
+                    "source": e.source,
+                    "target": e.target,
+                    "relation": e.relation,
+                    "confidence": e.confidence
+                } for e in parser.extract_edges(code_nodes)]
+            except Exception:
+                pass
 
             if nodes:
+                node_map = {n["id"]: n for n in nodes}
+                current_graph["nodes"] = nodes
+                current_graph["edges"] = edges
+                current_graph["node_map"] = node_map
                 community_map = community_detector.detect_communities(
                     community_detector.build_graph(nodes, edges)
                 )
@@ -180,7 +232,7 @@ async def query(request: QueryRequest):
             for r in vector_results
         ]
 
-        gr = []
+        gr = search_graph(query_vector.tolist(), top_k=request.limit or 10)
         merged = merger.merge(vr, gr, alpha, beta)
 
         sources = [

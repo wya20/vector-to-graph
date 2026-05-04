@@ -88,12 +88,54 @@ curl http://localhost:8000/graph
 | JavaScript | .js, .ts, .jsx, .tsx |
 | Markdown | .md |
 
+## AI 助手集成
+
+Vector-to-Graph 支持通过 MCP (Model Context Protocol) 与各种 AI 编码助手集成。
+
+### 支持的平台
+
+| AI 助手 | 配置位置 | 安装方式 |
+|---------|----------|----------|
+| Claude Code / Desktop | [integrations/claude-desktop/](integrations/claude-desktop/) | `claude mcp add --transport http vtg http://localhost:8000/mcp` |
+| Trae | [integrations/trae/](integrations/trae/) | 复制到 `.trae/mcp.json` |
+| Cursor | [integrations/cursor/](integrations/cursor/) | 复制到 `.cursor/mcp.json` |
+| OpenCode | [integrations/opencode/](integrations/opencode/) | 复制到 `.opencode/mcp.json` |
+| OpenClaw | [integrations/openclaw/](integrations/openclaw/) | 复制到 `.claw/mcp.json` |
+| Windsurf | [integrations/windsurf/](integrations/windsurf/) | 复制到 `.windsurf/mcp.json` |
+
+详细说明请查看 [integrations/README.md](integrations/README.md)。
+
+### 快速集成
+
+1. 启动 vector-to-graph 服务：
+   ```bash
+   docker-compose up -d
+   ```
+
+2. 启动 MCP Server：
+   ```bash
+   uv run python -m src.mcp.server
+   ```
+
+3. 在 AI 助手中添加 MCP Server（以 Claude Code 为例）：
+   ```bash
+   claude mcp add --transport http vtg http://localhost:8000/mcp
+   ```
+
+### 可用工具
+
+- `vtg_index(path)`: 索引代码/文档
+- `vtg_query(question, limit)`: 查询混合搜索引擎
+- `vtg_get_graph()`: 获取知识图谱结构
+- `vtg_get_status()`: 查看服务状态
+
 ## 技术栈
 
 - **向量检索**：Qdrant + Sentence-Transformers
 - **图谱构建**：NetworkX + Tree-sitter
 - **API 服务**：FastAPI + Uvicorn
 - **社区检测**：Louvain/Leiden 算法
+- **AI 集成**：MCP (Model Context Protocol)
 
 ## License
 

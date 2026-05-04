@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "vector-to-graph": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "src.mcp.server"]
+    }
+  }
+}
