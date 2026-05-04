@@ -5,7 +5,6 @@ from typing import Optional, List, Dict, Set
 import uuid
 import numpy as np
 from pathlib import Path
-from collections import defaultdict
 
 from ..vector_indexer.embedder import Embedder
 from ..vector_indexer.chunker import Chunker
@@ -263,7 +262,6 @@ async def index_documents(request: IndexRequest, background_tasks: BackgroundTas
 
             qdrant_store.upsert(vectors)
 
-            nodes, edges = [], []
             try:
                 new_nodes = [{
                     "id": n.id,
