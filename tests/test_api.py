@@ -32,14 +32,18 @@ class TestRootEndpoint:
 
 
 class TestIndexEndpoint:
+    @patch('src.api.server.TransactionLogger')
     @patch('src.api.server.QdrantVectorStore')
     @patch('src.api.server.Embedder')
     @patch('src.api.server.Chunker')
     @patch('src.api.server.CommunityDetector')
     @patch('src.api.server.GraphExporter')
     def test_index_returns_task_id(
-        self, mock_exporter, mock_detector, mock_chunker, mock_embedder, mock_qdrant
+        self, mock_exporter, mock_detector, mock_chunker, mock_embedder, mock_qdrant, mock_tx_logger
     ):
+        mock_tx_logger_instance = MagicMock()
+        mock_tx_logger.return_value = mock_tx_logger_instance
+
         mock_chunker_instance = MagicMock()
         mock_chunker_instance.chunk_file.return_value = []
         mock_chunker.return_value = mock_chunker_instance

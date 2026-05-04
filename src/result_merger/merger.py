@@ -133,7 +133,7 @@ class ResultMerger:
                     text=r.label,
                     score=r.confidence,
                     normalized_score=beta * g_norm[i],
-                    metadata={**r.metadata, "source": "graph"},
+                    metadata={**r.metadata, "source": "graph", "relations": r.relations},
                 )
             )
 
@@ -152,6 +152,17 @@ class ResultMerger:
         context_parts = []
         for r in results[:max_items]:
             source_tag = "[向量检索]" if r.source == ResultSource.VECTOR else "[图谱检索]"
-            context_parts.append(f"{source_tag} {r.text}")
+            part = f"{source_tag} {r.text}"
+            if r.source == ResultSource.GRAPH and r.metadata.get("relations"):
+                relations = r.metadata.get("relations", [])
+                rel_strs = []
+                for rel in relations[:5]:
+                    if "target" in rel:
+                        rel_strs.append(f"→{rel['target']}({rel['relation']})")
+                    elif "source" in rel:
+                        rel_strs.append(f"{rel['source']}→({rel['relation']})")
+                if rel_strs:
+                    part += f" [关系: {', '.join(rel_strs)}]"
+            context_parts.append(part)
 
         return "\n\n".join(context_parts)

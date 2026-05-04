@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-05-04
+
+### Fixed
+
+#### Core Graph Issues
+- **Cross-file call edge extraction**: EnhancedTreeSitterParser now supports `global_func_ids` parameter to extract call edges across files
+- **EnhancedTreeSitterParser not used**: API server now uses EnhancedTreeSitterParser instead of base TreeSitterParser
+- **Graph search was vector search**: search_graph() now implements true BFS graph traversal, not just vector similarity
+- **Graph data overwrites**: Index operation now incrementally merges nodes/edges instead of overwriting
+- **Graph data lost on restart**: Server now restores graph from graph.json on startup via _restore_graph_from_disk()
+
+#### Data Consistency
+- **Chunker/Treesitter mismatch**: Server now reuses TreeSitterParser nodes to generate chunks, ensuring consistent boundaries
+- **Merger discarding relations**: GraphResult.relations are now passed through metadata to build_context()
+
+#### Integration Issues
+- **TransactionLogger unused**: TransactionLogger now integrated into index_task for operation logging
+- **FileWatcher unused**: Added /watch/{path} and /watch/stop endpoints to enable file watching
+- **Weak tests**: Added test_cross_file_calls_edge() to verify call edge extraction
+
+### Added
+
+- **TreeSitterAlignedChunker class**: New chunker that reuses TreeSitter nodes for consistent chunk boundaries
+
 ## [0.2.0] - 2026-05-04
 
 ### Added

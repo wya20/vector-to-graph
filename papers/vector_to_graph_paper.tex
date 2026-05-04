@@ -1,0 +1,263 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{listings}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+}
+
+\title{Vector-to-Graph: A Hybrid Retrieval Engine for Code Documentation Based on Vector Similarity and Knowledge Graph}
+
+\author{
+    王政杰 \\
+    广州铁路职业技术学院 \\
+    \texttt{wangzhengjie@example.com}
+    \and
+    祝江停 \\
+    广州铁路职业技术学院 \\
+    \texttt{zhujiangting@example.com}
+}
+
+\date{May 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Code documentation retrieval is important for developers. Traditional vector search can find similar text but lacks understanding of code relationships. Knowledge graph search understands structure but misses semantic meaning. This paper presents Vector-to-Graph, a hybrid retrieval engine that combines vector similarity search and knowledge graph relationships. The system uses intelligent routing to automatically select the best retrieval strategy based on query type. Experimental results show that the router achieves 90\% classification accuracy, and the hybrid approach provides more comprehensive results than single-method approaches. The system supports Python, JavaScript, and Markdown files, and integrates with AI coding assistants through the Model Context Protocol (MCP).
+\end{abstract}
+
+\section{Introduction}
+
+Code documentation is important for software development. Developers often need to find specific functions, understand relationships between code components, or get explanations of concepts. Traditional search methods have limitations.
+
+Vector search uses embeddings to find similar text. This method works well for semantic queries like "what is a decorator". However, it does not capture relationships between code elements. A query like "which function calls print" cannot be answered well by vector search alone.
+
+Knowledge graph search builds a graph of code relationships. It understands that Function A calls Function B, or that Class X implements Interface Y. This approach works well for structural queries. However, it cannot handle semantic queries like "explain what this code does".
+
+We need a system that combines both approaches. This is why we built Vector-to-Graph. The system uses intelligent routing to determine query type. Based on the query, it chooses vector search, graph search, or both combined.
+
+The main contributions of this paper are:
+
+\begin{itemize}
+    \item A hybrid retrieval system combining vector and graph search
+    \item An intelligent routing mechanism with 90\% classification accuracy
+    \item A result fusion strategy that combines strengths of both methods
+    \item Integration with AI coding assistants through MCP protocol
+\end{itemize}
+
+\section{Related Work}
+
+\subsection{Vector Retrieval}
+Vector retrieval converts text into numerical vectors. Similar texts have similar vectors. Systems like Qdrant and Pinecone provide vector search capabilities. Sentence-transformers create embeddings for code and documentation. Vector search is fast and accurate for semantic matching.
+
+\subsection{Knowledge Graph Retrieval}
+Knowledge graphs represent entities and their relationships. Graphify builds knowledge graphs from code using tree-sitter. It extracts functions, classes, and their relationships. Leiden algorithm detects communities in the graph. This approach provides explainable results based on code structure.
+
+\subsection{Hybrid Retrieval Systems}
+Hybrid retrieval combines multiple search methods. GraphRAG uses knowledge graphs with language models. HybridRAG integrates vector and graph approaches for question answering. These systems show that combining methods improves results.
+
+Vector-to-Graph differs from these systems in several ways. First, it focuses on code documentation retrieval. Second, it uses intelligent routing to select the best method automatically. Third, it provides MCP integration for AI coding assistants.
+
+\section{System Design}
+
+\subsection{Architecture Overview}
+The system has five main components. Figure \ref{fig:architecture} shows the architecture.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{architecture.png}
+\caption{System Architecture}
+\label{fig:architecture}
+\end{figure}
+
+The flow works as follows:
+
+\begin{enumerate}
+    \item User sends a query
+    \item Router classifies the query type
+    \item System runs vector search, graph search, or both in parallel
+    \item Merger combines results using weighted scoring
+    \item User receives ranked results with sources and confidence scores
+\end{enumerate}
+
+\subsection{Query Router Module}
+The router classifies queries into four types:
+
+\begin{itemize}
+    \item \textbf{VECTOR\_ONLY}: Semantic queries like definitions and explanations
+    \item \textbf{GRAPH\_ONLY}: Structural queries about code relationships
+    \item \textbf{HYBRID}: Queries requiring both semantic and structural information
+    \item \textbf{DIRECT}: Simple greetings that need no search
+\end{itemize}
+
+The router uses keyword matching. Table \ref{tab:keywords} shows example keywords.
+
+\begin{table}[htbp]
+\centering
+\caption{Query Type Keywords}
+\label{tab:keywords}
+\begin{tabular}{ll}
+\toprule
+Query Type & Keywords \\
+\midrule
+Vector & 是什么, 讲了什么, 总结, 介绍, 定义 \\
+Graph & 代码, 函数, 类, 调用, 继承, 实现 \\
+Hybrid & 关系, 区别, 联系, 为什么, 怎么做到的 \\
+Direct & 你好, hello, 谢谢 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The router assigns weights based on query type. For VECTOR\_ONLY, weights are (1.0, 0.0). For GRAPH\_ONLY, weights are (0.0, 1.0). For HYBRID, weights are (0.4, 0.6) favoring graph search.
+
+\subsection{Vector Retrieval Module}
+The vector module has three parts. The chunker splits files into manageable pieces. The embedder converts text to vectors using sentence-transformers. The vector store (Qdrant) indexes and searches vectors.
+
+The chunker preserves metadata including file path, line numbers, and chunk index. This helps users locate the original source.
+
+The embedder uses a model trained on code and documentation. It handles Python, JavaScript, and Markdown files.
+
+\subsection{Graph Retrieval Module}
+The graph module has three parts. The parser extracts code structure using tree-sitter. The community detector finds related groups using Leiden algorithm. The exporter manages graph data.
+
+Tree-sitter parses code into an Abstract Syntax Tree (AST). From the AST, the system extracts functions, classes, and their relationships. Relationships include calls, inherits, implements, and imports.
+
+The community detector builds a NetworkX graph from extracted data. It runs Leiden algorithm to detect communities. Related functions and classes are grouped together.
+
+\subsection{Result Merger Module}
+The merger combines vector and graph results. It normalizes scores from both sources. Then it applies weights based on query type.
+
+Score normalization uses min-max scaling. If vector scores range from 0.5 to 0.9, they become 0.0 to 1.0.
+
+The merge process:
+\begin{enumerate}
+    \item Normalize vector scores to [0, 1]
+    \item Normalize graph scores to [0, 1]
+    \item Multiply by weights (alpha for vector, beta for graph)
+    \item Combine and sort by normalized score
+    \item Remove duplicates keeping highest score
+\end{enumerate}
+
+\section{Implementation}
+
+\subsection{Tech Stack}
+The system uses the following technologies:
+
+\begin{itemize}
+    \item \textbf{Vector Search}: Qdrant + Sentence-Transformers
+    \item \textbf{Graph Construction}: NetworkX + Tree-sitter
+    \item \textbf{API Service}: FastAPI + Uvicorn
+    \item \textbf{Community Detection}: Louvain/Leiden algorithms
+    \item \textbf{AI Integration}: MCP (Model Context Protocol)
+\end{itemize}
+
+\subsection{Key Components}
+
+The main components are:
+
+\begin{itemize}
+    \item \textbf{Embedder}: Creates vector embeddings for text
+    \item \textbf{Chunker}: Splits files into searchable chunks
+    \item \textbf{QdrantVectorStore}: Manages vector indices
+    \item \textbf{TreeSitterParser}: Extracts code structure
+    \item \textbf{CommunityDetector}: Finds code communities
+    \item \textbf{QueryRouter}: Classifies queries
+    \item \textbf{ResultMerger}: Combines search results
+\end{itemize}
+
+\subsection{API Endpoints}
+
+The system provides four main endpoints:
+
+\begin{itemize}
+    \item \textbf{POST /index}: Indexes a file or directory
+    \item \textbf{POST /query}: Queries the hybrid search engine
+    \item \textbf{GET /graph}: Returns the knowledge graph
+    \item \textbf{GET /status}: Returns system status
+\end{itemize}
+
+\subsection{Deployment}
+The system supports Docker deployment. A docker-compose file starts both the Vector-to-Graph service and Qdrant database.
+
+\section{Experiments}
+
+\subsection{Test Setup}
+We tested the system on 20 sample queries covering different categories. We measured router accuracy, retrieval performance, and response times.
+
+\subsection{Router Accuracy}
+The router achieved 90\% accuracy on query classification. Table \ref{tab:router_results} shows detailed results.
+
+\begin{table}[htbp]
+\centering
+\caption{Router Classification Results}
+\label{tab:router_results}
+\begin{tabular}{lcc}
+\toprule
+Category & Accuracy & Count \\
+\midrule
+Code Definition & 50\% & 2 \\
+Code Implementation & 100\% & 2 \\
+Relationship Query & 100\% & 2 \\
+Semantic QA & 100\% & 1 \\
+Concept Definition & 100\% & 1 \\
+Comparison Query & 50\% & 2 \\
+Code Parameters & 100\% & 1 \\
+Summary & 100\% & 1 \\
+Code Understanding & 100\% & 3 \\
+Reason Query & 100\% & 1 \\
+Feature Introduction & 100\% & 1 \\
+Introduction & 100\% & 1 \\
+Code Relationships & 100\% & 1 \\
+Method Consultation & 100\% & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Retrieval Performance}
+Table \ref{tab:retrieval_metrics} shows performance comparison.
+
+\begin{table}[htbp]
+\centering
+\caption{Retrieval Performance Comparison}
+\label{tab:retrieval_metrics}
+\begin{tabular}{lccc}
+\toprule
+Method & Avg Time (ms) & Avg Score & Avg Results \\
+\midrule
+Vector Only & 1.068 & 0.900 & 5.0 \\
+Graph Only & 1.312 & 0.850 & 5.0 \\
+Hybrid & 2.417 & 0.600 & 10.0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The hybrid method takes longer but returns more comprehensive results. The normalized score is lower because it combines two sources with weighted averaging.
+
+\section{Conclusion and Future Work}
+
+This paper presented Vector-to-Graph, a hybrid retrieval system for code documentation. The system combines vector search and knowledge graph search with intelligent routing. Experiments show 90\% router accuracy and comprehensive retrieval results.
+
+Future work includes:
+\begin{itemize}
+    \item Adding more programming language support
+    \item Improving router accuracy with machine learning
+    \item Implementing caching for better performance
+    \item Adding user feedback for result refinement
+\end{itemize}
+
+\section{Acknowledgments}
+We thank our instructor for guidance and the open-source community for tools like Qdrant, Tree-sitter, and NetworkX.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

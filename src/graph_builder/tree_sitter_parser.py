@@ -284,9 +284,11 @@ class TreeSitterParser:
         }
 
 
-def _extract_function_calls_python(tree: tree_sitter.Tree, content: bytes, file_path: str, all_nodes: List[CodeNode]) -> List[CodeEdge]:
+def _extract_function_calls_python(tree: tree_sitter.Tree, content: bytes, file_path: str, all_nodes: List[CodeNode], global_func_ids: dict = None) -> List[CodeEdge]:
     edges = []
     func_ids = {n.label: n.id for n in all_nodes if n.node_type == 'function'}
+    if global_func_ids:
+        func_ids.update(global_func_ids)
 
     current_func = None
 
@@ -323,9 +325,11 @@ def _extract_function_calls_python(tree: tree_sitter.Tree, content: bytes, file_
     return edges
 
 
-def _extract_function_calls_javascript(tree: tree_sitter.Tree, content: bytes, file_path: str, all_nodes: List[CodeNode]) -> List[CodeEdge]:
+def _extract_function_calls_javascript(tree: tree_sitter.Tree, content: bytes, file_path: str, all_nodes: List[CodeNode], global_func_ids: dict = None) -> List[CodeEdge]:
     edges = []
     func_ids = {n.label: n.id for n in all_nodes if n.node_type == 'function'}
+    if global_func_ids:
+        func_ids.update(global_func_ids)
 
     current_func = None
 
@@ -363,7 +367,7 @@ def _extract_function_calls_javascript(tree: tree_sitter.Tree, content: bytes, f
 
 
 class EnhancedTreeSitterParser(TreeSitterParser):
-    def extract_edges(self, nodes: List[CodeNode]) -> List[CodeEdge]:
+    def extract_edges(self, nodes: List[CodeNode], global_func_ids: dict = None, content: bytes = None) -> List[CodeEdge]:
         edges = super().extract_edges(nodes)
 
         if not nodes:
@@ -376,16 +380,19 @@ class EnhancedTreeSitterParser(TreeSitterParser):
             return edges
 
         try:
-            with open(file_path, 'rb') as f:
-                content = f.read()
+            if content is None:
+                with open(file_path, 'rb') as f:
+                    file_content = f.read()
+            else:
+                file_content = content
 
             parser = self._get_parser(language)
-            tree = parser.parse(content)
+            tree = parser.parse(file_content)
 
             if language == 'python':
-                call_edges = _extract_function_calls_python(tree, content, file_path, nodes)
+                call_edges = _extract_function_calls_python(tree, file_content, file_path, nodes, global_func_ids)
             elif language == 'javascript':
-                call_edges = _extract_function_calls_javascript(tree, content, file_path, nodes)
+                call_edges = _extract_function_calls_javascript(tree, file_content, file_path, nodes, global_func_ids)
             else:
                 call_edges = []
 

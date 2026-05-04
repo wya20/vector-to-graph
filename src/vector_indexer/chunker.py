@@ -462,3 +462,68 @@ class Chunker:
                 return i + 1
 
         return len(lines)
+
+
+class TreeSitterAlignedChunker(Chunker):
+    def __init__(self, max_tokens: int = 500):
+        super().__init__(max_tokens)
+        self._parser = None
+
+    def _get_parser(self):
+        if self._parser is None:
+            from ..graph_builder.tree_sitter_parser import EnhancedTreeSitterParser
+            self._parser = EnhancedTreeSitterParser()
+        return self._parser
+
+    def chunk_file_aligned(self, file_path: str) -> List[Chunk]:
+        path = Path(file_path)
+        suffix = path.suffix.lower()
+        source = str(path)
+
+        if suffix not in [".py", ".js", ".ts", ".jsx", ".tsx"]:
+            return self.chunk_file(file_path)
+
+        try:
+            parser = self._get_parser()
+            code_nodes = parser.parse_file(file_path)
+
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read()
+            lines = content.split("\n")
+
+            chunks = []
+            for node in code_nodes:
+                if node.node_type in ["function", "class"]:
+                    start_line = node.metadata.get("start_line", node.line)
+                    end_line = node.metadata.get("end_line", node.line)
+
+                    if start_line > 0 and end_line >= start_line:
+                        chunk_lines = lines[start_line - 1 : end_line]
+                        chunk_text = "\n".join(chunk_lines)
+
+                        chunk_type = "code_class" if node.node_type == "class" else "code_function"
+                        metadata_kwargs = {
+                            "source": source,
+                            "chunk_type": chunk_type,
+                            "language": suffix[1:],
+                            "line_start": start_line,
+                            "line_end": end_line,
+                        }
+                        if node.node_type == "class":
+                            metadata_kwargs["class_name"] = node.label
+                        else:
+                            metadata_kwargs["function_name"] = node.label
+
+                        chunks.append(Chunk(
+                            id=str(uuid.uuid4()),
+                            text=chunk_text,
+                            metadata=ChunkMetadata(**metadata_kwargs)
+                        ))
+
+            if not chunks:
+                return self.chunk_file(file_path)
+
+            return chunks
+
+        except Exception:
+            return self.chunk_file(file_path)

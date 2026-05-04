@@ -196,6 +196,45 @@ class TestEnhancedTreeSitterParser:
         edges = self.parser.extract_edges(nodes)
         assert len(edges) >= 1
 
+    def test_calls_edge_extraction(self):
+        code = """def foo():
+    bar()
+"""
+        nodes = self.parser.parse_content(code, "test.py", "python")
+        edges = self.parser.extract_edges(nodes)
+
+        defines_edges = [e for e in edges if e.relation == "defines"]
+        assert len(defines_edges) >= 1
+
+        func_edges = [e for e in edges if e.relation == "calls"]
+        assert len(func_edges) == 0
+
+    def test_cross_file_calls_edge(self):
+        code1 = """def foo():
+    pass
+"""
+        code2 = """def bar():
+    foo()
+"""
+        nodes1 = self.parser.parse_content(code1, "file1.py", "python")
+        nodes2 = self.parser.parse_content(code2, "file2.py", "python")
+
+        global_func_ids = {}
+        for n in nodes1:
+            if n.node_type == "function":
+                global_func_ids[n.label] = n.id
+        for n in nodes2:
+            if n.node_type == "function":
+                global_func_ids[n.label] = n.id
+
+        edges2 = self.parser.extract_edges(nodes2, global_func_ids, code2.encode('utf-8'))
+
+        calls_edges = [e for e in edges2 if e.relation == "calls"]
+        assert len(calls_edges) == 1
+        assert calls_edges[0].relation == "calls"
+        assert "bar" in calls_edges[0].source or "bar" in str(calls_edges[0].source)
+        assert "foo" in calls_edges[0].target or "foo" in str(calls_edges[0].target)
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

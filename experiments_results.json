@@ -1,0 +1,83 @@
+{
+  "router_accuracy": {
+    "total": 20,
+    "correct": 18,
+    "accuracy": 0.9,
+    "by_category": {
+      "代码定义": {
+        "total": 2,
+        "correct": 1
+      },
+      "代码实现": {
+        "total": 2,
+        "correct": 2
+      },
+      "关系查询": {
+        "total": 2,
+        "correct": 2
+      },
+      "语义问答": {
+        "total": 1,
+        "correct": 1
+      },
+      "概念定义": {
+        "total": 1,
+        "correct": 1
+      },
+      "对比查询": {
+        "total": 2,
+        "correct": 1
+      },
+      "代码参数": {
+        "total": 1,
+        "correct": 1
+      },
+      "总结类": {
+        "total": 1,
+        "correct": 1
+      },
+      "代码理解": {
+        "total": 3,
+        "correct": 3
+      },
+      "原因查询": {
+        "total": 1,
+        "correct": 1
+      },
+      "功能介绍": {
+        "total": 1,
+        "correct": 1
+      },
+      "介绍类": {
+        "total": 1,
+        "correct": 1
+      },
+      "代码关系": {
+        "total": 1,
+        "correct": 1
+      },
+      "方法咨询": {
+        "total": 1,
+        "correct": 1
+      }
+    }
+  },
+  "retrieval_metrics": {
+    "vector_only": {
+      "avg_time_ms": 1.068,
+      "avg_score": 0.9,
+      "avg_results": 5.0
+    },
+    "graph_only": {
+      "avg_time_ms": 1.312,
+      "avg_score": 0.85,
+      "avg_results": 5.0
+    },
+    "hybrid": {
+      "avg_time_ms": 2.417,
+      "avg_score": 0.6,
+      "avg_results": 10.0
+    }
+  },
+  "test_count": 8
+}
