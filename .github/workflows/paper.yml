@@ -13,12 +13,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install CJK fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
+
       - name: Compile LaTeX
         uses: xu-cheng/latex-action@v3
         with:
           root_file: vector_to_graph_paper.tex
           working_directory: papers
-          latexmk_use_lualatex: true
+          latexmk_use_xelatex: true
+          args: "-pdfxe -bibtex -interaction=nonstopmode"
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4
