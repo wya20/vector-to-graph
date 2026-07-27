@@ -1,83 +1,216 @@
 {
   "router_accuracy": {
-    "total": 20,
-    "correct": 18,
-    "accuracy": 0.9,
+    "total": 121,
+    "correct": 111,
+    "accuracy": 0.9173553719008265,
     "by_category": {
       "代码定义": {
-        "total": 2,
-        "correct": 1
+        "total": 6,
+        "correct": 5,
+        "accuracy": 0.8333333333333334
       },
       "代码实现": {
-        "total": 2,
-        "correct": 2
+        "total": 10,
+        "correct": 7,
+        "accuracy": 0.7
       },
       "关系查询": {
-        "total": 2,
-        "correct": 2
+        "total": 8,
+        "correct": 7,
+        "accuracy": 0.875
       },
       "语义问答": {
         "total": 1,
-        "correct": 1
+        "correct": 1,
+        "accuracy": 1.0
       },
       "概念定义": {
-        "total": 1,
-        "correct": 1
+        "total": 14,
+        "correct": 14,
+        "accuracy": 1.0
       },
       "对比查询": {
-        "total": 2,
-        "correct": 1
+        "total": 14,
+        "correct": 10,
+        "accuracy": 0.7142857142857143
       },
       "代码参数": {
-        "total": 1,
-        "correct": 1
+        "total": 7,
+        "correct": 7,
+        "accuracy": 1.0
       },
       "总结类": {
-        "total": 1,
-        "correct": 1
+        "total": 10,
+        "correct": 10,
+        "accuracy": 1.0
       },
       "代码理解": {
-        "total": 3,
-        "correct": 3
+        "total": 9,
+        "correct": 8,
+        "accuracy": 0.8888888888888888
       },
       "原因查询": {
-        "total": 1,
-        "correct": 1
+        "total": 13,
+        "correct": 13,
+        "accuracy": 1.0
       },
       "功能介绍": {
-        "total": 1,
-        "correct": 1
+        "total": 6,
+        "correct": 6,
+        "accuracy": 1.0
       },
       "介绍类": {
-        "total": 1,
-        "correct": 1
+        "total": 11,
+        "correct": 11,
+        "accuracy": 1.0
       },
       "代码关系": {
         "total": 1,
-        "correct": 1
+        "correct": 1,
+        "accuracy": 1.0
       },
       "方法咨询": {
-        "total": 1,
-        "correct": 1
+        "total": 11,
+        "correct": 11,
+        "accuracy": 1.0
       }
+    },
+    "error_details": [
+      {
+        "query": "混合检索有什么优势",
+        "expected": "hybrid",
+        "predicted": "vector_only",
+        "category": "对比查询"
+      },
+      {
+        "query": "chunker怎么分割文件",
+        "expected": "graph_only",
+        "predicted": "vector_only",
+        "category": "代码实现"
+      },
+      {
+        "query": "ResultMerger怎么去重",
+        "expected": "graph_only",
+        "predicted": "vector_only",
+        "category": "代码理解"
+      },
+      {
+        "query": "graph和vector两种检索哪种更快",
+        "expected": "hybrid",
+        "predicted": "vector_only",
+        "category": "对比查询"
+      },
+      {
+        "query": "QueryType枚举定义了哪些值",
+        "expected": "graph_only",
+        "predicted": "vector_only",
+        "category": "代码定义"
+      },
+      {
+        "query": "关键字匹配和语义匹配的对比",
+        "expected": "hybrid",
+        "predicted": "vector_only",
+        "category": "对比查询"
+      },
+      {
+        "query": "向量检索和图检索的融合策略是什么",
+        "expected": "hybrid",
+        "predicted": "vector_only",
+        "category": "关系查询"
+      },
+      {
+        "query": "如何实现调用边提取",
+        "expected": "graph_only",
+        "predicted": "hybrid",
+        "category": "代码实现"
+      },
+      {
+        "query": "fastapi的background_tasks怎么用",
+        "expected": "graph_only",
+        "predicted": "vector_only",
+        "category": "代码实现"
+      },
+      {
+        "query": "Docker部署和本地部署的对比",
+        "expected": "hybrid",
+        "predicted": "vector_only",
+        "category": "对比查询"
+      }
+    ]
+  },
+  "merger_test": {
+    "vector_count": 5,
+    "graph_count": 5,
+    "merged_count": 10,
+    "graph_with_relations": 2
+  },
+  "call_edge_extraction": {
+    "test_results": [
+      {
+        "file": "server.py",
+        "function": "query",
+        "status": "passed",
+        "nodes_found": 38,
+        "edges_found": 42,
+        "call_edges_found": 4,
+        "calls_from_target": 1,
+        "description": "API query函数应该调用多个组件"
+      },
+      {
+        "file": "server.py",
+        "function": "index_documents",
+        "status": "passed",
+        "nodes_found": 38,
+        "edges_found": 42,
+        "call_edges_found": 4,
+        "calls_from_target": 0,
+        "description": "索引函数应该调用解析器和向量存储"
+      },
+      {
+        "file": "tree_sitter_parser.py",
+        "function": "parse_file",
+        "status": "passed",
+        "nodes_found": 30,
+        "edges_found": 42,
+        "call_edges_found": 12,
+        "calls_from_target": 0,
+        "description": "解析函数应该调用语言检测和解析"
+      }
+    ],
+    "summary": {
+      "total_tests": 3,
+      "passed": 3,
+      "errors": 0,
+      "total_call_edges": 20
     }
   },
-  "retrieval_metrics": {
-    "vector_only": {
-      "avg_time_ms": 1.068,
-      "avg_score": 0.9,
-      "avg_results": 5.0
-    },
-    "graph_only": {
-      "avg_time_ms": 1.312,
-      "avg_score": 0.85,
-      "avg_results": 5.0
-    },
-    "hybrid": {
-      "avg_time_ms": 2.417,
-      "avg_score": 0.6,
-      "avg_results": 10.0
+  "parser_comparison": {
+    "basic_edges": 38,
+    "basic_calls": 0,
+    "basic_time_ms": 0.047,
+    "enhanced_edges": 42,
+    "enhanced_calls": 4,
+    "enhanced_time_ms": 3.719,
+    "new_call_edges": 4,
+    "time_overhead_ms": 3.672
+  },
+  "ir_metrics": {
+    "num_queries": 60,
+    "average_metrics": {
+      "precision@5": 0.5266666666666667,
+      "precision@10": 0.43666666666666654,
+      "recall@5": 0.7429761904761902,
+      "recall@10": 0.9245833333333336,
+      "mrr": 0.7555555555555558,
+      "ndcg@5": 0.8130655132064434
     }
   },
-  "test_count": 8
+  "test_summary": {
+    "router_accuracy_pct": 91.7,
+    "call_edges_extracted": 20,
+    "parser_enhanced_edges": 42,
+    "parser_basic_edges": 38,
+    "parser_new_call_edges": 4,
+    "parser_time_ms": 3.719
+  }
 }
