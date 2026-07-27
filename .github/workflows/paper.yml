@@ -1,0 +1,27 @@
+name: Compile Paper PDF
+
+on:
+  push:
+    paths:
+      - 'papers/**'
+      - '.github/workflows/paper.yml'
+  workflow_dispatch:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile LaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: vector_to_graph_paper.tex
+          working_directory: papers
+          latexmk_use_lualatex: true
+
+      - name: Upload PDF
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper
+          path: papers/vector_to_graph_paper.pdf
