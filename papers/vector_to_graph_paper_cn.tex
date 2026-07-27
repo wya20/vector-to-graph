@@ -1,0 +1,320 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{ctex}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+}
+
+\title{Vector-to-Graph: 基于向量相似性和知识图谱的代码文档混合检索引擎}
+
+\author{
+    王政杰 \\
+    广州铁路职业技术学院 \\
+    \texttt{wangzhengjie@example.com}
+    \and
+    祝江停 \\
+    广州铁路职业技术学院 \\
+    \texttt{zhujiangting@example.com}
+}
+
+\date{2026年5月}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+代码文档检索对开发者非常重要。传统的向量检索可以找到相似的文本，但缺乏对代码关系的理解。知识图谱检索理解代码结构，但无法处理语义含义。本文提出了Vector-to-Graph，一个结合向量相似度检索和知识图谱关系的混合检索引擎。该系统使用智能路由技术，根据查询类型自动选择最佳检索策略。实验结果表明，路由器达到了90\%的分类准确率，混合检索方法比单一方法提供更全面的结果。该系统支持Python、JavaScript和Markdown文件，并通过模型上下文协议（MCP）与AI编码助手集成。
+\end{abstract}
+
+\section{引言}
+
+代码文档对软件开发非常重要。开发者经常需要查找特定函数、理解代码组件之间的关系，或获取概念解释。传统搜索方法有局限性。
+
+向量检索使用嵌入向量来查找相似文本。这种方法对"什么是装饰器"这样的语义查询效果很好。然而，它不能捕获代码元素之间的关系。"哪个函数调用了print"这样的查询无法仅靠向量检索来很好地回答。
+
+知识图谱检索构建代码关系图。它理解函数A调用函数B，或者类X实现接口Y。这种方法对结构化查询效果很好。然而，它无法处理"解释这段代码做什么"这样的语义查询。
+
+我们需要结合两种方法。这就是我们构建Vector-to-Graph的原因。该系统使用智能路由来确定查询类型。根据查询，它选择向量检索、图谱检索或两者结合。
+
+本文的主要贡献是：
+
+\begin{itemize}
+    \item 一个结合向量检索和图检索的混合检索系统
+    \item 一个达到90\%分类准确率的智能路由机制
+    \item 一种结合两种方法优势的结果融合策略
+    \item 通过MCP协议与AI编码助手集成
+\end{itemize}
+
+\section{相关工作}
+
+\subsection{向量检索}
+向量检索将文本转换为数值向量。相似的文本具有相似的向量。Qdrant和Pinecone等系统提供向量搜索能力。Sentence-transformers为代码和文档创建嵌入。向量检索对语义匹配快速准确。
+
+\subsection{知识图谱检索}
+知识图谱表示实体及其关系。Graphify使用tree-sitter从代码构建知识图谱。它提取函数、类及其关系。Leiden算法检测图中的社区。这种方法提供基于代码结构的可解释结果。
+
+\subsection{混合检索系统}
+混合检索结合多种搜索方法。GraphRAG将知识图谱与语言模型结合使用。HybridRAG集成向量和图方法进行问答。这些系统表明，结合方法可以改善结果。
+
+Vector-to-Graph在几个方面与这些系统不同。首先，它专注于代码文档检索。其次，它使用智能路由自动选择最佳方法。第三，它提供AI编码助手的MCP集成。
+
+\section{系统设计}
+
+\subsection{架构概述}
+该系统有五个主要组件。图\ref{fig:architecture}显示了架构。
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.5cm and 2cm,
+    block/.style={rectangle, draw, text width=3cm, text centered, minimum height=1cm, rounded corners},
+    arrow/.style={->, >=Stealth, thick}
+]
+
+\node (user) [block] {用户查询};
+\node (router) [block, right=of user] {路由器};
+\node (querytype) [below=0.3cm of router, font=\small] {VECTOR\_ONLY \\ GRAPH\_ONLY \\ HYBRID};
+
+\node (vector) [block, above right=1cm and 1.5cm of router] {向量检索};
+\node (graph) [block, below right=1cm and 1.5cm of router] {图谱检索};
+
+\node (merger) [block, right=of router, xshift=1cm] {结果合并};
+\node (results) [block, right=of merger] {检索结果};
+
+\draw [arrow] (user) -- (router);
+\draw [arrow] (router) -- (vector);
+\draw [arrow] (router) -- (graph);
+\draw [arrow] (vector) |- (merger);
+\draw [arrow] (graph) |- (merger);
+\draw [arrow] (merger) -- (results);
+\draw [arrow] (router) -- (merger);
+
+\end{tikzpicture}
+\caption{系统架构}
+\label{fig:architecture}
+\end{figure}
+
+工作流程如下：
+
+\begin{enumerate}
+    \item 用户发送查询
+    \item 路由器分类查询类型
+    \item 系统并行运行向量检索、图谱检索或两者
+    \item 合并器使用加权评分组合结果
+    \item 用户收到带有来源和置信度分数的排序结果
+\end{enumerate}
+
+\subsection{查询路由模块}
+路由器将查询分类为四种类型：
+
+\begin{itemize}
+    \item \textbf{VECTOR\_ONLY}: 语义查询，如定义和解释
+    \item \textbf{GRAPH\_ONLY}: 关于代码关系的结构查询
+    \item \textbf{HYBRID}: 需要语义和结构信息的查询
+    \item \textbf{DIRECT}: 不需要搜索的简单问候
+\end{itemize}
+
+路由器使用关键词匹配。表\ref{tab:keywords}显示了示例关键词。
+
+\begin{table}[htbp]
+\centering
+\caption{查询类型关键词}
+\label{tab:keywords}
+\begin{tabular}{ll}
+\toprule
+查询类型 & 关键词 \\
+\midrule
+向量 & 是什么, 讲了什么, 总结, 介绍, 定义 \\
+图谱 & 代码, 函数, 类, 调用, 继承, 实现 \\
+混合 & 关系, 区别, 联系, 为什么, 怎么做到的 \\
+直接 & 你好, hello, 谢谢 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+路由器根据查询类型分配权重。对于VECTOR\_ONLY，权重为(1.0, 0.0)。对于GRAPH\_ONLY，权重为(0.0, 1.0)。对于HYBRID，权重为(0.4, 0.6)，偏向图谱检索。
+
+\subsection{向量检索模块}
+向量模块有三个部分。分块器将文件分割成可管理的块。嵌入器使用sentence-transformers将文本转换为向量。向量存储（Qdrant）索引和搜索向量。
+
+分块器保留元数据，包括文件路径、行号和块索引。这帮助用户定位原始来源。
+
+嵌入器使用针对代码和文档训练的模型。它处理Python、JavaScript和Markdown文件。
+
+\subsection{图谱检索模块}
+图谱模块有三个部分。解析器使用tree-sitter提取代码结构。社区检测器使用Leiden算法找到相关组。导出器管理图数据。
+
+Tree-sitter将代码解析为抽象语法树（AST）。从AST中，系统提取函数、类及其关系。EnhancedTreeSitterParser类提供调用边提取，识别代码体中的函数调用。
+
+系统提取四种类型的关系：
+\begin{itemize}
+    \item \textbf{defines}: 文件定义函数或类
+    \item \textbf{calls}: 函数调用另一个函数
+    \item \textbf{imports}: 文件导入模块
+    \item \textbf{contains}: 文件包含节点
+\end{itemize}
+
+社区检测器从提取的数据构建NetworkX图。它运行Leiden算法来检测社区。相关的函数和类被分组在一起。
+
+搜索图时，系统首先找到关键词匹配的节点，然后执行BFS（广度优先搜索）遍历通过边扩展到相关节点。这提供了包括间接关系的全面结果。
+
+\subsection{结果合并模块}
+合并器组合向量和图结果。它标准化来自两个源的分数。然后根据查询类型应用权重。
+
+分数标准化使用最小-最大缩放。如果向量分数范围为0.5到0.9，它们变为0.0到1.0。
+
+合并过程：
+\begin{enumerate}
+    \item 将向量分数标准化到[0, 1]
+    \item 将图谱分数标准化到[0, 1]
+    \item 乘以权重（alpha用于向量，beta用于图谱）
+    \item 按标准化分数组合和排序
+    \item 删除重复项，保留最高分数
+\end{enumerate}
+
+\section{实现}
+
+\subsection{技术栈}
+该系统使用以下技术：
+
+\begin{itemize}
+    \item \textbf{向量搜索}: Qdrant + Sentence-Transformers
+    \item \textbf{图构建}: NetworkX + Tree-sitter
+    \item \textbf{API服务}: FastAPI + Uvicorn
+    \item \textbf{社区检测}: Louvain/Leiden算法
+    \item \textbf{AI集成}: MCP（模型上下文协议）
+\end{itemize}
+
+\subsection{关键组件}
+
+主要组件是：
+
+\begin{itemize}
+    \item \textbf{Embedder}: 为文本创建向量嵌入
+    \item \textbf{Chunker}: 将文件分割成可搜索的块
+    \item \textbf{QdrantVectorStore}: 管理向量索引
+    \item \textbf{EnhancedTreeSitterParser}: 提取代码结构和调用边
+    \item \textbf{CommunityDetector}: 查找代码社区
+    \item \textbf{QueryRouter}: 分类查询
+    \item \textbf{ResultMerger}: 组合搜索结果
+\end{itemize}
+
+\subsection{API端点}
+
+系统提供四个主要端点：
+
+\begin{itemize}
+    \item \textbf{POST /index}: 索引文件或目录
+    \item \textbf{POST /query}: 查询混合搜索引擎
+    \item \textbf{GET /graph}: 返回知识图谱
+    \item \textbf{GET /status}: 返回系统状态
+\end{itemize}
+
+\subsection{部署}
+系统支持Docker部署。docker-compose文件启动Vector-to-Graph服务和Qdrant数据库。
+
+\section{实验}
+
+\subsection{测试设置}
+我们在20个涵盖不同类别的样本查询上测试了系统。我们测量了路由器准确性、检索性能和响应时间。
+
+\subsection{路由器准确性}
+路由器在查询分类上达到了90\%的准确性。表\ref{tab:router_results}显示了详细结果。
+
+\begin{table}[htbp]
+\centering
+\caption{路由器分类结果}
+\label{tab:router_results}
+\begin{tabular}{lcc}
+\toprule
+类别 & 准确率 & 数量 \\
+\midrule
+代码定义 & 50\% & 2 \\
+代码实现 & 100\% & 2 \\
+关系查询 & 100\% & 2 \\
+语义问答 & 100\% & 1 \\
+概念定义 & 100\% & 1 \\
+对比查询 & 50\% & 2 \\
+代码参数 & 100\% & 1 \\
+总结类 & 100\% & 1 \\
+代码理解 & 100\% & 3 \\
+原因查询 & 100\% & 1 \\
+功能介绍 & 100\% & 1 \\
+介绍类 & 100\% & 1 \\
+代码关系 & 100\% & 1 \\
+方法咨询 & 100\% & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{检索性能}
+表\ref{tab:retrieval_metrics}显示了性能比较。
+
+\begin{table}[htbp]
+\centering
+\caption{检索方法比较}
+\label{tab:retrieval_metrics}
+\begin{tabular}{lccc}
+\toprule
+方法 & 响应时间(ms) & 结果数量 & 适用场景 \\
+\midrule
+仅向量 & 1.1 & 5 & 语义匹配 \\
+仅图谱 & 1.3 & 5 & 结构查询 \\
+混合 & 2.4 & 10 & 全面覆盖 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+混合方法耗时更长，但返回更全面的结果，检索项多2倍。每个结果都包含来源属性和关系信息。
+
+\subsection{调用边提取}
+表\ref{tab:call_edges}显示了调用边提取结果。
+
+\begin{table}[htbp]
+\centering
+\caption{调用边提取结果}
+\label{tab:call_edges}
+\begin{tabular}{lcc}
+\toprule
+解析器类型 & 总边数 & 调用边数 \\
+\midrule
+BasicParser & 38 & 0 \\
+EnhancedParser & 42 & 4 \\
+改进 & +4 & +4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+EnhancedTreeSitterParser提取了基础解析器遗漏的4条额外调用边。这使系统能够理解哪些函数调用了其他函数。
+
+\section{结论与展望}
+
+本文介绍了Vector-to-Graph，一个用于代码文档的混合检索系统。该系统将向量搜索和知识图谱搜索与智能路由相结合。实验显示90\%的路由器准确率和全面的检索结果。
+
+未来的工作包括：
+
+\begin{itemize}
+    \item 添加更多编程语言支持
+    \item 使用机器学习提高路由器准确性
+    \item 实现缓存以提高性能
+    \item 添加用户反馈以完善结果
+\end{itemize}
+
+\section{致谢}
+感谢导师的指导和开源社区提供的工具，如Qdrant、Tree-sitter和NetworkX。
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

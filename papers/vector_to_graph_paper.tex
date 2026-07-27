@@ -1,7 +1,8 @@
 \documentclass[11pt]{article}
-\usepackage[utf8]{inputenc}
 \usepackage{fontspec}
+\usepackage{xeCJK}
 \setmainfont{Latin Modern Roman}
+\setCJKmainfont{SimSun}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -88,7 +89,7 @@ The system has five main components. Figure \ref{fig:architecture} shows the arc
 
 \node (user) [block] {User Query};
 \node (router) [block, right=of user] {Router};
-\node (querytype) [below=0.3cm of router, font=\small] {VECTOR\_ONLY \\ GRAPH\_ONLY \\ HYBRID};
+\node (querytype) [below=0.3cm of router, font=\small, align=center] {VECTOR\_ONLY \\ GRAPH\_ONLY \\ HYBRID};
 
 \node (vector) [block, above right=1cm and 1.5cm of router] {Vector Search};
 \node (graph) [block, below right=1cm and 1.5cm of router] {Graph Search};

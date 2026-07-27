@@ -1,0 +1,5 @@
+[33m0f5b7c3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m fix: resolve lint errors and hatchling build config
+[33m0f86900[m[33m ([m[1;33mtag: [m[1;33mv0.3.0[m[33m)[m fix: resolve 11 critical graph extraction and integration issues (v0.3.0)
+[33mfb5b33c[m docs: 优化 README 中的项目描述，避免与 Graphify 混淆
+[33mae0bbaf[m fix: create data directories before Docker build
+[33m577a0eb[m docs: add CHANGELOG.md
