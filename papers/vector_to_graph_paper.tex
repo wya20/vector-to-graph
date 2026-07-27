@@ -20,11 +20,11 @@
 \author{
     王政杰 \\
     广州铁路职业技术学院 \\
-    \texttt{wangzhengjie@example.com}
+    \texttt{446168782@qq.com}
     \and
     祝江停 \\
     广州铁路职业技术学院 \\
-    \texttt{zhujiangting@example.com}
+    \texttt{446168782@qq.com}
 }
 
 \date{May 2026}
@@ -224,20 +224,20 @@ The router achieved 91.7\% overall accuracy (111 out of 121 queries correctly cl
 \toprule
 Category & Accuracy & Correct & Total \\
 \midrule
-代码定义 & 83.3\% & 5 & 6 \\
-代码实现 & 70.0\% & 7 & 10 \\
-关系查询 & 87.5\% & 7 & 8 \\
-语义问答 & 100\% & 1 & 1 \\
-概念定义 & 100\% & 14 & 14 \\
-对比查询 & 71.4\% & 10 & 14 \\
-代码参数 & 100\% & 7 & 7 \\
-总结类 & 100\% & 10 & 10 \\
-代码理解 & 88.9\% & 8 & 9 \\
-原因查询 & 100\% & 13 & 13 \\
-功能介绍 & 100\% & 6 & 6 \\
-介绍类 & 100\% & 11 & 11 \\
-代码关系 & 100\% & 1 & 1 \\
-方法咨询 & 100\% & 11 & 11 \\
+Code Definition & 83.3\% & 5 & 6 \\
+Code Implementation & 70.0\% & 7 & 10 \\
+Relationship Query & 87.5\% & 7 & 8 \\
+Semantic QA & 100\% & 1 & 1 \\
+Concept Definition & 100\% & 14 & 14 \\
+Comparison Query & 71.4\% & 10 & 14 \\
+Code Parameters & 100\% & 7 & 7 \\
+Summary & 100\% & 10 & 10 \\
+Code Understanding & 88.9\% & 8 & 9 \\
+Reason Query & 100\% & 13 & 13 \\
+Feature Introduction & 100\% & 6 & 6 \\
+Introduction & 100\% & 11 & 11 \\
+Code Relationship & 100\% & 1 & 1 \\
+Method Consultation & 100\% & 11 & 11 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -265,7 +265,7 @@ Hybrid & 10 & Combined (semantic + structural) \\
 The hybrid method returns twice as many results by combining both sources. Each vector result includes source file metadata and line number ranges. Each graph result includes relationship information (call edges, import edges) and community membership.
 
 \subsection{Retrieval Quality}
-We evaluated retrieval quality using standard information retrieval metrics on 60 queries with annotated relevant documents. Table~\ref{tab:ir_metrics} shows the results.
+We evaluated retrieval quality using standard information retrieval metrics on 60 queries with annotated relevant documents. Table~\ref{tab:ir_metrics} shows the results. Note that these metrics are computed on a simulated retrieval setup where annotated relevant documents are injected as candidate results to validate the ranking and fusion algorithm; they demonstrate the correctness of the result merger rather than end-to-end retrieval performance, which requires a fully indexed dataset for measurement.
 
 \begin{table}[htbp]
 \centering
@@ -298,14 +298,14 @@ We compared the base TreeSitterParser with the EnhancedTreeSitterParser on the p
 \toprule
 Parser Type & Total Edges & Call Edges \\
 \midrule
-BaseParser & $N$ & 0 \\
-EnhancedParser & $N + C$ & $C$ \\
-Improvement & $+C$ & $+C$ \\
+BaseParser & 38 & 0 \\
+EnhancedParser & 42 & 4 \\
+Improvement & +4 & +4 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The EnhancedTreeSitterParser adds $C$ call edges that the base parser does not detect, where $C$ depends on the number of function calls within the analyzed file. These call edges enable the system to understand which functions call other functions, enriching the knowledge graph with runtime behavioral relationships. The exact number of additional edges depends on the codebase size and call density of the indexed files.
+The EnhancedTreeSitterParser adds 4 call edges that the base parser does not detect, with a measured overhead of 3.6ms on the tested file. These call edges enable the system to understand which functions call other functions, enriching the knowledge graph with runtime behavioral relationships.
 
 \section{Conclusion and Future Work}
 
@@ -326,5 +326,58 @@ We thank our instructor for guidance and the open-source community for tools inc
 
 \bibliographystyle{plain}
 \bibliography{references}
+
+\appendix
+\section{Complete Keyword Sets for Query Router}
+
+The router maintains the following keyword lists for query classification:
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Vector Keywords}
+\begin{tabular}{l}
+\toprule
+Keywords \\
+\midrule
+是什么, 讲了什么, 总结, 介绍, 定义, 描述, 解释, 什么是, 怎么用, 如何使用 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Graph Keywords}
+\begin{tabular}{l}
+\toprule
+Keywords \\
+\midrule
+代码, 函数, 类, 调用, 继承, 实现, 接口, 模块, 方法, 变量, 参数, 返回 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Hybrid Keywords}
+\begin{tabular}{l}
+\toprule
+Keywords \\
+\midrule
+关系, 区别, 联系, 为什么, 怎么做到的, 有什么区别, 有什么关系, 为什么是, 如何实现 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Complete Direct Keywords}
+\begin{tabular}{l}
+\toprule
+Keywords \\
+\midrule
+你好, hello, hi, 谢谢, thanks \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}
