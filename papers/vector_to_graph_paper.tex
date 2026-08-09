@@ -29,7 +29,7 @@
 \maketitle
 
 \begin{abstract}
-Code documentation retrieval is important for developers. Traditional vector search can find similar text but lacks understanding of code relationships. Knowledge graph search understands structure but misses semantic meaning. This paper presents Vector-to-Graph, a hybrid retrieval engine that combines vector similarity search and knowledge graph relationships. The system uses a rule-based keyword router to automatically select the best retrieval strategy based on query type. Experimental results on 121 test queries show that the router achieves 91.7\% classification accuracy (111/121 correct), with error analysis revealing that ambiguous queries containing both structural and semantic keywords are the primary failure cases. The hybrid approach provides more comprehensive results than single-method approaches by combining semantic matches from vector search with structural relationships from graph traversal. The system supports Python, JavaScript, and Markdown files, and integrates with AI coding assistants through the Model Context Protocol (MCP)~\cite{mcp2024}.
+Code documentation retrieval is important for developers. Traditional vector search can find similar text but lacks understanding of code relationships. Knowledge graph search understands structure but misses semantic meaning. This paper presents Vector-to-Graph, a hybrid retrieval engine that combines vector similarity search and knowledge graph relationships. The system uses a rule-based keyword router to automatically select the best retrieval strategy based on query type. Experimental results on 121 test queries show that the router achieves 91.7\% classification accuracy (111/121 correct), with error analysis revealing that ambiguous queries containing both structural and semantic keywords are the primary failure cases. On 29 concept-level queries, the hybrid approach achieves Precision@5 of 0.655 and NDCG@5 of 0.696, outperforming BM25 keyword search by 2.4$\times$ and pure vector search (using the same BGE embedding model) by 1.9$\times$. This demonstrates that knowledge graph fusion provides substantial improvement over single-method baselines. The system supports Python, JavaScript, and Markdown files, and integrates with AI coding assistants through the Model Context Protocol (MCP)~\cite{mcp2024}.
 \end{abstract}
 
 \section{Introduction}
@@ -302,9 +302,44 @@ Improvement & +4 & +4 \\
 
 The EnhancedTreeSitterParser adds 4 call edges that the base parser does not detect, with a measured overhead of 3.6ms on the tested file. These call edges enable the system to understand which functions call other functions, enriching the knowledge graph with runtime behavioral relationships.
 
+\subsection{Baseline Comparison}
+To evaluate the contribution of knowledge graph fusion, we compared Vector-to-Graph against two single-method baselines on a subset of 29 concept-level queries (covering concept definitions, introductions, feature descriptions, summaries, semantic QA, reason queries, comparison queries, and method consultations). Code-structure queries (e.g., ``what are the parameters of function X'') were excluded to ensure a fair comparison focused on semantic understanding.
+
+\textbf{BM25 (Keyword Search).} BM25 is a classic information retrieval algorithm that ranks documents by term frequency and inverse document frequency. It serves as the traditional keyword-search baseline, representing systems without semantic understanding.
+
+\textbf{BGE Pure Vector Search.} This baseline uses the same \texttt{BAAI/bge-small-zh-v1.5} embedding model as Vector-to-Graph but performs only vector similarity search without any knowledge graph fusion. By holding the embedding model constant, this baseline isolates the contribution of the graph fusion component.
+
+\textbf{Vector-to-Graph (Hybrid).} The full hybrid system combining vector search, graph traversal, and weighted result fusion as described in Section 3.
+
+All three systems were evaluated on the same 29 annotated queries using standard IR metrics: Precision@K, Recall@K, MRR, and NDCG@5. Table~\ref{tab:baseline_comparison} shows the results.
+
+\begin{table}[htbp]
+\centering
+\caption{Baseline Comparison on 29 Concept-Level Queries}
+\label{tab:baseline_comparison}
+\begin{tabular}{lccc}
+\toprule
+Metric & BM25 & BGE Vector & Vector-to-Graph (Hybrid) \\
+\midrule
+Precision@5 & 0.276 & 0.345 & \textbf{0.655} \\
+Precision@10 & 0.224 & 0.283 & \textbf{0.600} \\
+Recall@5 & 0.229 & 0.296 & \textbf{0.586} \\
+Recall@10 & 0.315 & 0.426 & \textbf{0.875} \\
+MRR & 0.498 & 0.524 & \textbf{0.609} \\
+NDCG@5 & 0.367 & 0.408 & \textbf{0.696} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Vector-to-Graph outperforms both baselines on all six metrics. Compared to BM25, the hybrid system achieves 2.4$\times$ higher Precision@5 and 2.8$\times$ higher Recall@10. Compared to the BGE pure vector search baseline---which uses the identical embedding model---the hybrid system achieves 1.9$\times$ higher Precision@5 and 2.1$\times$ higher Recall@10. The NDCG@5 improvement from 0.408 (BGE) to 0.696 (Hybrid) represents a 70.6\% relative gain attributable solely to graph fusion.
+
+These results provide two key insights. First, embedding-based search (BGE) outperforms keyword-based search (BM25) by 25\% in Precision@5, confirming the value of semantic understanding for concept-level queries. Second, and more importantly, adding knowledge graph fusion on top of the same embeddings yields a 90\% improvement in Precision@5 (0.345 to 0.655), demonstrating that structural code relationships captured by the knowledge graph provide complementary information that significantly enhances retrieval quality.
+
 \section{Conclusion and Future Work}
 
 This paper presented Vector-to-Graph, a hybrid retrieval system for code documentation. The system combines vector search using BAAI/bge-small-zh-v1.5 embeddings with knowledge graph search built from Tree-sitter AST parsing. A keyword-based router classifies queries into four types and selects the appropriate retrieval strategy. Experiments on 121 test queries show 91.7\% router accuracy, with error analysis revealing limitations of the keyword-based approach on ambiguous queries. The EnhancedTreeSitterParser adds 4 call edges (3.6ms overhead) to the base parser on the tested file, enabling function call relationship extraction.
+
+Baseline comparison on 29 concept-level queries demonstrates that the hybrid approach achieves Precision@5 of 0.655 and NDCG@5 of 0.696, outperforming BM25 keyword search by 2.4$\times$ and pure vector search (using the identical BGE embedding model) by 1.9$\times$. The 90\% improvement from BGE-only to hybrid confirms that knowledge graph fusion provides substantial and quantifiable gains beyond semantic embedding alone.
 
 Future work includes:
 \begin{itemize}
@@ -312,8 +347,8 @@ Future work includes:
     \item Replacing the keyword-based router with a learned classifier (e.g., fine-tuned BERT) to improve robustness on ambiguous queries
     \item Implementing caching for frequently queried code elements
     \item Adding user feedback mechanisms for result relevance scoring
-    \item Conducting larger-scale evaluation with 100+ real-world developer queries and standard IR metrics (Precision, Recall, MRR, NDCG)
-    \item Comparing against external baselines such as GraphRAG and HybridRAG
+    \item Conducting end-to-end evaluation with a fully indexed real-world codebase and 100+ developer queries
+    \item Extending the baseline comparison to include systems such as GraphRAG and HybridRAG on a standardized code retrieval benchmark
 \end{itemize}
 
 \section{Acknowledgments}

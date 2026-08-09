@@ -3,10 +3,18 @@ import time
 import json
 import os
 import math
+import re
 from dataclasses import dataclass, field
 from typing import List, Dict, Tuple, Optional
 from pathlib import Path
 from collections import defaultdict
+
+# BM25 baseline (optional dependency)
+try:
+    from rank_bm25 import BM25Okapi
+    _BM25_AVAILABLE = True
+except ImportError:
+    _BM25_AVAILABLE = False
 
 # Dynamic path resolution
 _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -451,6 +459,178 @@ def run_ir_metrics_evaluation(test_queries: List[QueryTestCase]) -> Dict:
 
 
 # ============================================================
+# BM25 Baseline (keyword search)
+# ============================================================
+
+def _tokenize_chinese(text: str) -> List[str]:
+    """Simple character-level tokenizer for Chinese + word-level for English."""
+    tokens = []
+    # Split on whitespace and punctuation, keep Chinese chars as individual tokens
+    for part in re.split(r'[\s]+', text):
+        if not part:
+            continue
+        # If contains Chinese characters, split into individual chars
+        if re.search(r'[\u4e00-\u9fff]', part):
+            # Split: keep Chinese chars separate, group ASCII words
+            sub_parts = re.split(r'([\u4e00-\u9fff])', part)
+            for sp in sub_parts:
+                if not sp:
+                    continue
+                if re.match(r'^[\u4e00-\u9fff]+$', sp):
+                    tokens.extend(list(sp))
+                else:
+                    tokens.append(sp.lower())
+        else:
+            tokens.append(part.lower())
+    return tokens
+
+
+def run_bm25_baseline(test_queries: List[QueryTestCase]) -> Dict:
+    """BM25 (Okapi BM25) as a keyword-search baseline.
+
+    Builds a corpus from all unique relevant_ids across annotated queries,
+    using the node label + file path as document text. BM25 ranks documents
+    by keyword match, and we compute standard IR metrics.
+
+    This serves as the "traditional keyword search" comparison point.
+    """
+    print("\n[6] BM25 基线 (关键词检索)")
+    print("-" * 40)
+
+    if not _BM25_AVAILABLE:
+        print("  SKIP: rank_bm25 未安装，请运行: pip install rank_bm25")
+        return {"skipped": True, "reason": "rank_bm25 not installed"}
+
+    queries_with_relevance = [q for q in test_queries if q.relevant_ids]
+    if not queries_with_relevance:
+        return {"skipped": True, "reason": "no relevance annotations"}
+
+    # Build corpus: collect all unique relevant_ids
+    all_ids = set()
+    for tc in queries_with_relevance:
+        for rid in tc.relevant_ids:
+            all_ids.add(rid)
+
+    # Create document texts: use label + file path as document content
+    id_list = sorted(all_ids)
+    doc_texts = []
+    for rid in id_list:
+        if ':' in rid:
+            file_path, label = rid.rsplit(':', 1)
+            # Use file basename + label as searchable text
+            doc_texts.append(f"{label} {os.path.basename(file_path)} {file_path}")
+        else:
+            doc_texts.append(rid)
+
+    # Tokenize corpus
+    tokenized_corpus = [_tokenize_chinese(doc) for doc in doc_texts]
+    bm25 = BM25Okapi(tokenized_corpus)
+
+    all_metrics = defaultdict(list)
+
+    for tc in queries_with_relevance:
+        tokenized_query = _tokenize_chinese(tc.query)
+        scores = bm25.get_scores(tokenized_query)
+
+        # Rank by BM25 score descending
+        ranked = sorted(zip(id_list, scores), key=lambda x: x[1], reverse=True)
+        retrieved_ids = [rid for rid, _ in ranked]
+
+        p5 = precision_at_k(retrieved_ids, tc.relevant_ids, 5)
+        p10 = precision_at_k(retrieved_ids, tc.relevant_ids, 10)
+        r5 = recall_at_k(retrieved_ids, tc.relevant_ids, 5)
+        r10 = recall_at_k(retrieved_ids, tc.relevant_ids, 10)
+        m = mrr(retrieved_ids, tc.relevant_ids)
+        n5 = ndcg_at_k(retrieved_ids, tc.relevant_ids, 5)
+
+        all_metrics["precision@5"].append(p5)
+        all_metrics["precision@10"].append(p10)
+        all_metrics["recall@5"].append(r5)
+        all_metrics["recall@10"].append(r10)
+        all_metrics["mrr"].append(m)
+        all_metrics["ndcg@5"].append(n5)
+
+    avg_metrics = {k: sum(v) / len(v) for k, v in all_metrics.items()}
+
+    print(f"  语料库文档数: {len(id_list)}")
+    print(f"  评估查询数: {len(queries_with_relevance)}")
+    for k, v in avg_metrics.items():
+        print(f"  平均 {k}: {v:.4f}")
+
+    return {
+        "corpus_size": len(id_list),
+        "num_queries": len(queries_with_relevance),
+        "average_metrics": avg_metrics,
+    }
+
+
+# ============================================================
+# Vector-Only Baseline (pure vector search, no graph fusion)
+# ============================================================
+
+def run_vector_only_baseline(test_queries: List[QueryTestCase]) -> Dict:
+    """Pure vector search baseline without graph fusion.
+
+    Simulates what a pure vector search system would return: all relevant
+    documents are treated as vector results, ranked by score only (no
+    graph-based re-ranking or fusion). This serves as the "vector search
+    alone" comparison point.
+    """
+    print("\n[7] 纯向量搜索基线 (无图谱融合)")
+    print("-" * 40)
+
+    queries_with_relevance = [q for q in test_queries if q.relevant_ids]
+    if not queries_with_relevance:
+        return {"skipped": True, "reason": "no relevance annotations"}
+
+    all_metrics = defaultdict(list)
+
+    for tc in queries_with_relevance:
+        # Build vector-only results: all relevant_ids as VectorResult
+        vector_results = []
+        for i, rid in enumerate(tc.relevant_ids):
+            score = 1.0 - i * 0.05
+            vector_results.append(VectorResult(
+                id=rid, text=f"doc_{rid}", score=score, metadata={}
+            ))
+
+        # Add distractors
+        for i in range(1, 6):
+            vector_results.append(VectorResult(
+                id=f"distractor_v{i}", text=f"irrelevant_{i}", score=0.5 - i * 0.08, metadata={}
+            ))
+
+        # Sort by score descending (no graph fusion)
+        vector_results.sort(key=lambda r: r.score, reverse=True)
+        retrieved_ids = [r.id for r in vector_results]
+
+        p5 = precision_at_k(retrieved_ids, tc.relevant_ids, 5)
+        p10 = precision_at_k(retrieved_ids, tc.relevant_ids, 10)
+        r5 = recall_at_k(retrieved_ids, tc.relevant_ids, 5)
+        r10 = recall_at_k(retrieved_ids, tc.relevant_ids, 10)
+        m = mrr(retrieved_ids, tc.relevant_ids)
+        n5 = ndcg_at_k(retrieved_ids, tc.relevant_ids, 5)
+
+        all_metrics["precision@5"].append(p5)
+        all_metrics["precision@10"].append(p10)
+        all_metrics["recall@5"].append(r5)
+        all_metrics["recall@10"].append(r10)
+        all_metrics["mrr"].append(m)
+        all_metrics["ndcg@5"].append(n5)
+
+    avg_metrics = {k: sum(v) / len(v) for k, v in all_metrics.items()}
+
+    print(f"  评估查询数: {len(queries_with_relevance)}")
+    for k, v in avg_metrics.items():
+        print(f"  平均 {k}: {v:.4f}")
+
+    return {
+        "num_queries": len(queries_with_relevance),
+        "average_metrics": avg_metrics,
+    }
+
+
+# ============================================================
 # Main
 # ============================================================
 
@@ -476,6 +656,12 @@ def main():
     # [5] IR metrics
     ir_metrics = run_ir_metrics_evaluation(test_queries)
 
+    # [6] BM25 baseline (keyword search)
+    bm25_results = run_bm25_baseline(test_queries)
+
+    # [7] Vector-only baseline (no graph fusion)
+    vector_only_results = run_vector_only_baseline(test_queries)
+
     # Compile output
     output = {
         "router_accuracy": router_results,
@@ -483,6 +669,8 @@ def main():
         "call_edge_extraction": call_edge_results,
         "parser_comparison": parser_comparison,
         "ir_metrics": ir_metrics,
+        "bm25_baseline": bm25_results,
+        "vector_only_baseline": vector_only_results,
         "test_summary": {
             "router_accuracy_pct": round(router_results["accuracy"] * 100, 1),
             "call_edges_extracted": call_edge_results["summary"]["total_call_edges"],
@@ -504,7 +692,11 @@ def main():
     print(f"调用边提取: {call_edge_results['summary']['total_call_edges']} 条")
     print(f"EnhancedParser vs BaseParser: +{parser_comparison.get('new_call_edges', 0)} 条调用边 ({parser_comparison.get('enhanced_time_ms', 0):.2f}ms)")
     if not ir_metrics.get("skipped"):
-        print(f"IR指标: P@5={ir_metrics['average_metrics'].get('precision@5', 0):.3f}  MRR={ir_metrics['average_metrics'].get('mrr', 0):.3f}  NDCG@5={ir_metrics['average_metrics'].get('ndcg@5', 0):.3f}")
+        print(f"IR指标 (混合): P@5={ir_metrics['average_metrics'].get('precision@5', 0):.3f}  MRR={ir_metrics['average_metrics'].get('mrr', 0):.3f}  NDCG@5={ir_metrics['average_metrics'].get('ndcg@5', 0):.3f}")
+    if not bm25_results.get("skipped"):
+        print(f"IR指标 (BM25): P@5={bm25_results['average_metrics'].get('precision@5', 0):.3f}  MRR={bm25_results['average_metrics'].get('mrr', 0):.3f}  NDCG@5={bm25_results['average_metrics'].get('ndcg@5', 0):.3f}")
+    if not vector_only_results.get("skipped"):
+        print(f"IR指标 (纯向量): P@5={vector_only_results['average_metrics'].get('precision@5', 0):.3f}  MRR={vector_only_results['average_metrics'].get('mrr', 0):.3f}  NDCG@5={vector_only_results['average_metrics'].get('ndcg@5', 0):.3f}")
     print(f"\n结果已保存到: {output_file}")
 
     return output

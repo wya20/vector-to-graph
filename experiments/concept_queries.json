@@ -1,0 +1,415 @@
+[
+  {
+    "query": "fastapi框架有什么用",
+    "expected_type": "vector_only",
+    "category": "语义问答",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:init_components",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:SourceItem",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:StatusResponse"
+    ]
+  },
+  {
+    "query": "什么是向量检索",
+    "expected_type": "vector_only",
+    "category": "概念定义",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:__init__",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_get_parser",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:VectorResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:ChunkMetadata",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_file",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_code",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_markdown",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_split_markdown_paragraphs"
+    ]
+  },
+  {
+    "query": "知识图谱能做什么",
+    "expected_type": "vector_only",
+    "category": "功能介绍",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:get_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:CommunityDetector",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:build_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:detect_communities",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:get_community_stats",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:GraphExporter",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:export"
+    ]
+  },
+  {
+    "query": "为什么Embedder使用中文模型",
+    "expected_type": "hybrid",
+    "category": "原因查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:Embedder"
+    ]
+  },
+  {
+    "query": "总结社区检测算法",
+    "expected_type": "vector_only",
+    "category": "总结类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:CommunityDetector",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:build_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:detect_communities",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:get_community_stats"
+    ]
+  },
+  {
+    "query": "什么是向量嵌入",
+    "expected_type": "vector_only",
+    "category": "概念定义",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:Embedder",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:encode",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:encode_query"
+    ]
+  },
+  {
+    "query": "介绍一下知识图谱的构建流程",
+    "expected_type": "vector_only",
+    "category": "介绍类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:get_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:CommunityDetector",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:build_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:detect_communities",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:get_community_stats",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:GraphExporter",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:export"
+    ]
+  },
+  {
+    "query": "为什么合并结果要排序",
+    "expected_type": "hybrid",
+    "category": "原因查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:ResultSource",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:VectorResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:GraphResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:MergedResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:ResultMerger",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:normalize_scores",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:merge",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:build_context"
+    ]
+  },
+  {
+    "query": "总结结果合并的策略",
+    "expected_type": "vector_only",
+    "category": "总结类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:ResultSource",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:VectorResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:GraphResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:MergedResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:ResultMerger",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:normalize_scores",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:merge",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:build_context"
+    ]
+  },
+  {
+    "query": "如何选择合适的嵌入模型",
+    "expected_type": "vector_only",
+    "category": "方法咨询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:Embedder",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:encode",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:encode_query"
+    ]
+  },
+  {
+    "query": "介绍下FastAPI框架",
+    "expected_type": "vector_only",
+    "category": "介绍类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:init_components",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:SourceItem",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:StatusResponse"
+    ]
+  },
+  {
+    "query": "什么是调用图",
+    "expected_type": "graph_only",
+    "category": "概念定义",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\tree_sitter_parser.py:build_call_graph"
+    ]
+  },
+  {
+    "query": "描述一下API的整体架构",
+    "expected_type": "vector_only",
+    "category": "功能介绍",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:init_components",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:SourceItem",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:StatusResponse"
+    ]
+  },
+  {
+    "query": "为什么代码分块要对齐函数边界",
+    "expected_type": "hybrid",
+    "category": "原因查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_get_parser",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:ChunkMetadata",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_file",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_code",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_markdown",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_split_markdown_paragraphs",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_split_large_paragraph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_chunk_python"
+    ]
+  },
+  {
+    "query": "GraphResult和VectorResult的区别",
+    "expected_type": "hybrid",
+    "category": "对比查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:VectorResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:GraphResult"
+    ]
+  },
+  {
+    "query": "什么是代码知识图谱",
+    "expected_type": "graph_only",
+    "category": "概念定义",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:get_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:CommunityDetector",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:build_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:detect_communities",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:get_community_stats",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:GraphExporter",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:export"
+    ]
+  },
+  {
+    "query": "介绍下Qdrant的向量存储机制",
+    "expected_type": "vector_only",
+    "category": "介绍类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:__init__",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:QdrantVectorStore",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:_ensure_collection",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:upsert",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:search",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:delete",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:get_collection_info"
+    ]
+  },
+  {
+    "query": "总结向量检索的优缺点",
+    "expected_type": "vector_only",
+    "category": "总结类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:__init__",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_get_parser",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\result_merger\\merger.py:VectorResult",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:ChunkMetadata",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_file",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_code",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_markdown",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_split_markdown_paragraphs"
+    ]
+  },
+  {
+    "query": "什么是句子嵌入",
+    "expected_type": "vector_only",
+    "category": "概念定义",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:Embedder",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:encode",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\embedder.py:encode_query"
+    ]
+  },
+  {
+    "query": "描述代码分块的不同策略",
+    "expected_type": "graph_only",
+    "category": "功能介绍",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_get_parser",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:ChunkMetadata",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_file",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_code",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:chunk_markdown",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_split_markdown_paragraphs",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_split_large_paragraph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_chunk_python"
+    ]
+  },
+  {
+    "query": "如何优化大规模代码库的索引速度",
+    "expected_type": "graph_only",
+    "category": "方法咨询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:index_documents",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:index_task",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:__init__",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_get_parser",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\mcp\\server.py:vtg_index",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:ChunkMetadata",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker"
+    ]
+  },
+  {
+    "query": "Chunker和TreeSitterAlignedChunker的区别",
+    "expected_type": "hybrid",
+    "category": "对比查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:TreeSitterAlignedChunker"
+    ]
+  },
+  {
+    "query": "总结一下知识图谱社区检测的意义",
+    "expected_type": "vector_only",
+    "category": "总结类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:CommunityDetector",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:build_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:detect_communities",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\community_detector.py:get_community_stats",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:get_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:GraphExporter",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\graph_builder\\graph_exporter.py:export"
+    ]
+  },
+  {
+    "query": "如何测试路由器分类准确率",
+    "expected_type": "graph_only",
+    "category": "方法咨询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\query_router\\router.py:QueryType",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\query_router\\router.py:QueryRouter",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\query_router\\router.py:classify",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\query_router\\router.py:get_weight"
+    ]
+  },
+  {
+    "query": "描述向量索引的构建流程",
+    "expected_type": "vector_only",
+    "category": "功能介绍",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:index_documents",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:index_task",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\qdrant_client.py:__init__",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:_get_parser",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\mcp\\server.py:vtg_index",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:ChunkMetadata",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\vector_indexer\\chunker.py:Chunker"
+    ]
+  },
+  {
+    "query": "为什么需要文件同步机制",
+    "expected_type": "hybrid",
+    "category": "原因查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:stop_watching",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:FileState",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:FileWatcher",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:__post_init__",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:compute_sha256",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:scan_directory",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:check_changes",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:start_watching",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:FileChangeHandler",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\sync_manager\\file_watcher.py:on_modified"
+    ]
+  },
+  {
+    "query": "QueryRequest和QueryResponse的区别",
+    "expected_type": "hybrid",
+    "category": "对比查询",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:query"
+    ]
+  },
+  {
+    "query": "总结API的四个端点",
+    "expected_type": "vector_only",
+    "category": "总结类",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:init_components",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:SourceItem",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:StatusResponse"
+    ]
+  },
+  {
+    "query": "什么是REST API",
+    "expected_type": "vector_only",
+    "category": "概念定义",
+    "relevant_ids": [
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:init_components",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:_restore_graph_from_disk",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:search_graph",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:IndexResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryRequest",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:SourceItem",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:QueryResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:GraphResponse",
+      "C:\\Users\\w\\Desktop\\trae\\projects\\vector-to-graph\\src\\api\\server.py:StatusResponse"
+    ]
+  }
+]

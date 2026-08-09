@@ -1,0 +1,13 @@
+{
+  "model": "BAAI/bge-small-zh-v1.5",
+  "corpus_size": 65,
+  "num_queries": 29,
+  "average_metrics": {
+    "precision@5": 0.3448275862068966,
+    "precision@10": 0.2827586206896551,
+    "recall@5": 0.29556650246305416,
+    "recall@10": 0.4255336617405583,
+    "mrr": 0.5237148176189492,
+    "ndcg@5": 0.408444188606929
+  }
+}
